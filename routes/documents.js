@@ -1,9 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const controller = require("../controllers/documentController");
-const mockAuth = require("../middleware/mockAuth");
+const verifyToken = require("../middleware/verifyToken");
 
-router.use(mockAuth);
+router.use(verifyToken);
 
 router.get("/hello", controller.hello);
 
@@ -13,6 +13,7 @@ router.post("/import", controller.importDoc);
 router.get("/:id", controller.getOne);
 router.put("/:id", controller.update);
 router.post("/:id/duplicate", controller.duplicate);
+router.post("/:id/export", controller.logExport);
 router.delete("/:id", controller.remove);
 
 router.post("/:id/sections", controller.addSection);

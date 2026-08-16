@@ -2,9 +2,9 @@
 const express = require("express");
 const router = express.Router();
 const controller = require("../controllers/userController");
-const mockAuth = require("../middleware/mockAuth");
+const verifyToken = require("../middleware/verifyToken");
 
-router.use(mockAuth);
+router.use(verifyToken);
 
 router.get("/me", controller.getMe);
 router.put("/me", controller.updateMe);

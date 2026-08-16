@@ -91,6 +91,24 @@ function duplicate(req, res) {
   res.status(201).json(copy);
 }
 
+function logExport(req, res) {
+  const doc = getDocOr404(req, res);
+  if (!doc) return;
+
+  const db = require("../db");
+  const newExport = {
+    id: db.makeId("exp"),
+    userId: req.user.id,
+    documentId: doc.id,
+    documentTitle: doc.title,
+    createdAt: new Date().toISOString()
+  };
+  db.data.exports.push(newExport);
+  db.save();
+
+  res.status(201).json(newExport);
+}
+
 function remove(req, res) {
   const doc = getDocOr404(req, res);
   if (!doc) return;
@@ -226,6 +244,7 @@ module.exports = {
   update,
   duplicate,
   remove,
+  logExport,
   addSection,
   updateSection,
   removeSection,

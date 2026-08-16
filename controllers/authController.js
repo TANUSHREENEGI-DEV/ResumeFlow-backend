@@ -2,6 +2,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const userModel = require("../models/userModel");
 const db = require("../db");
+const { sendResetEmail } = require("../config/emailService");
 
 const SECRET = process.env.JWT_SECRET;
 
@@ -47,7 +48,7 @@ function logout(req, res) {
   res.status(200).json({ message: "logged out" });
 }
 
-function forgotPassword(req, res) {
+async function forgotPassword(req, res) {
   const { email } = req.body;
   if (!email) {
     return res.status(400).json({ error: "email is required" });
@@ -57,6 +58,12 @@ function forgotPassword(req, res) {
   if (user) {
     const resetToken = db.makeId("reset");
     userModel.update(user, { resetToken });
+
+    try {
+      await sendResetEmail(user.email, resetToken);
+    } catch (err) {
+      console.log("Failed to send reset email:", err.message);
+    }
   }
 
   res.status(200).json({ message: "if that account exists, a reset link was sent" });
